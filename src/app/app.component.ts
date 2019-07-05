@@ -9,36 +9,66 @@ import { NUMBER } from './enums/number.enum';
 })
 export class AppComponent {
   
-  constructor(private calculationService: CalculationService){}
+  timeRunWebWorker: any;
+  resultWebWorker: any;
+  isWebWorkerRun: boolean;
+
+  timeRunJS: any;
+  resultJS: any;
+  isJSRun: boolean;
+
+  constructor(private calculationService: CalculationService){
+    this.timeRunWebWorker = 0;
+    this.resultWebWorker = [];
+    this.isWebWorkerRun = false;
+
+    this.timeRunJS = 0;
+    this.resultJS = [];
+    this.isJSRun = false;
+  }
+
+  get resWebWorker() {
+    return this.isWebWorkerRun? '... calculating': `${this.resultWebWorker.length} element(s) found`;
+  }
+
+  get resJS() {
+    return this.isJSRun? '... calculating': `${this.resultJS.length} element(s) found`;
+  }
 
   runTestWorker() {
-    const t0 = performance.now();
-    const elements = this.calculationService.createElement(NUMBER.TEN_MILLIONS);
-
     if (typeof Worker !== 'undefined') {
+      this.isWebWorkerRun = true;
+      const t0 = performance.now();
+      const elements = this.calculationService.createElement(NUMBER.TEN_MILLIONS);
       // Create a new
       const worker = new Worker('./app.worker', { type: 'module' });
-      worker.onmessage = ({ data }) => {
-        console.log(`page got message`, data);
-      };
       worker.postMessage(elements);
+
+      worker.onmessage = ({ data }) => {
+        this.resultWebWorker = data;
+        this.isWebWorkerRun = false;
+      };
+      
+      const t1 = performance.now();
+      this.timeRunWebWorker = t1 - t0;
     } else {
       // Web Workers are not supported in this environment.
       // You should add a fallback so that your program still executes correctly.
+      this.runTestThread();
     }
 
-    const t1 = performance.now();
-    console.log("Call to runWorker took " + (t1 - t0) + " milliseconds.");
+   
   }
 
   runTestThread() {
+    this.isJSRun = true;
     const t0 = performance.now();
     const elements = this.calculationService.createElement(NUMBER.TEN_MILLIONS);
-    const evenList = elements.slice().filter( num => {
-      return this.calculationService.isEvenNum(num);
+    this.resultJS = elements.slice().filter( num => {
+      return this.calculationService.isPrimeNumber(num);
     });
-    console.log(`There are ${evenList.length} even element`);
+    this.isJSRun = false;
     const t1 = performance.now();
-    console.log("Call to runThread took " + (t1 - t0) + " milliseconds.");
+    this.timeRunJS = t1 - t0;
   }
 }

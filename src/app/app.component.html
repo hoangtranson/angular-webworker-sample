@@ -1,5 +1,17 @@
 <!--The content below is only a placeholder and can be replaced.-->
+<h1>Test Web Worker Performance</h1>
 <button (click)="runTestWorker()">Web Worker</button>
 <button (click)="runTestThread()">JavaScript Thread</button>
-
+<hr>
+<h1>Result</h1>
+<div>
+  <h2>Web Worker </h2>
+  <div>Web Worker took: {{timeRunWebWorker}} ms </div>
+  <div>Result: {{resWebWorker}}</div>
+</div>
+<div>
+  <h2>JavaScript Thread </h2>
+  <div>JavaScript Thread took: {{timeRunJS}} ms </div>
+  <div>Result: {{resJS}}</div>
+</div>
 <!-- <router-outlet></router-outlet> -->
