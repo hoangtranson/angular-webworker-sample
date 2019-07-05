@@ -13,7 +13,7 @@ export class AppComponent {
 
   runTestWorker() {
     const t0 = performance.now();
-    // const elements = this.calculationService.createElement(NUMBER.TEN_MILLIONS);
+    const elements = this.calculationService.createElement(NUMBER.TEN_MILLIONS);
 
     if (typeof Worker !== 'undefined') {
       // Create a new
@@ -21,7 +21,7 @@ export class AppComponent {
       worker.onmessage = ({ data }) => {
         console.log(`page got message`, data);
       };
-      worker.postMessage([1,2,3]);
+      worker.postMessage(elements);
     } else {
       // Web Workers are not supported in this environment.
       // You should add a fallback so that your program still executes correctly.

@@ -8,7 +8,7 @@ export class CalculationService {
 
   constructor() { }
   createElement(num: NUMBER) {
-    return Array.from(Array(num).keys())
+    return [...Array(num).keys()]
   }
 
   isEvenNum(n){
